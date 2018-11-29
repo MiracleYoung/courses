@@ -1,0 +1,21 @@
+### 1. 移除列表中的重复元素，并保持新列表和元列表的顺序一致
+
+def my_lst(xx):
+    my_lst_test = set(lst)
+    my_lst_test_test = tuple(my_lst_test)
+    return my_lst_test_test
+
+lst = [1, 1, 2, 3, 4, 4, -1, -1]
+xxx = my_lst(lst)
+yyy = list(xxx)
+print(yyy)
+
+### 2.统计文本中各单词出现的次数
+def my_num(*ret):
+    count = {}
+    for i in ret:
+        count[i]= ret.count(i)
+    return count
+
+rest1  = my_num('ab', 'ab', 'c' ,'cccc', 'ccc' ,'cccc')
+print(rest1)
