@@ -19,3 +19,18 @@ def my_num(*ret):
 
 rest1  = my_num('ab', 'ab', 'c' ,'cccc', 'ccc' ,'cccc')
 print(rest1)
+
+
+### 3.第三题
+source = {'a': {'b': 1, 'c': 2}, 'd': {'e': 3, 'f': {'g': 4}}}
+target = {}
+
+def flatmap(srcDic, targetKey=''):
+    for k, v in srcDic.items():
+        if isinstance(v, dict):
+            flatmap(v, targetKey=targetKey + k + '.')
+        else:
+            target[targetKey + k] = v
+
+flatmap(source)
+print(target)
