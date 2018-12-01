@@ -1,0 +1,21 @@
+### 1.第一题：
+def my_lst(xx):
+    my_lst_test = set(lst)
+    my_lst_test_test = tuple(my_lst_test)
+    return my_lst_test_test
+
+lst = [1, 1, 2, 3, 4, 4, -1, -1]
+xxx = my_lst(lst)
+yyy = list(xxx)
+print(yyy)
+
+
+### 2.第二题：
+def my_num(*ret):
+    count = {}
+    for i in ret:
+        count[i]= ret.count(i)
+    return count
+
+rest1  = my_num('ab', 'ab', 'c' ,'cccc', 'ccc' ,'cccc')
+print(rest1)
