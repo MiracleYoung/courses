@@ -1,0 +1,77 @@
+class Heap:
+    @staticmethod
+    def cmp(x, y):
+        if x > y:
+            return 1
+        if x < y:
+            return -1
+        return 0
+    
+    def __init__(self, cmp=None):
+        if cmp is not None:
+            self.cmp = Heap.cmp
+        else:
+            self.cmp = cmp
+            
+        self.data = []
+        
+    def put(self, value):
+        i = len(self.data)
+        self.data.append(value)
+        
+        pi = (i - 1) // 2
+        print(pi)
+        while pi >= 0 and self.cmp(value, self.data[pi]) > 0:
+            self.data[pi], self.data[i] = self.data[i], self.data[pi]
+            
+            i = pi
+            pi = (i - 1) //  2
+            
+    def pop(self):
+        if self.data is None:
+            return None
+        if len(self.data) == 1:
+            return self.data.pop()
+        
+        i = 0
+        value = self.data[i]
+        self.data[i] = self.data.pop()
+        
+        li= 2 * i + 1
+        ri = 2 * i + 2
+        
+        while self.data and li < len(self.data):
+            ci = li
+            if ri < len(self.data) and self.cmp(self.data[ri], self.data[li]) > 0:
+                ci = ri
+            if self.cmp(self.data[ci], self.data[i]) > 0:
+                self.data[ci], self.data[i] = self.data[i], self.data[ci]
+                i = ci
+                li = 2 * i + 1
+                ri = 2 * i + 2
+            else:
+                break
+        return value
+
+
+class Node:
+    def __init__(self, value, pri):
+        self.value = value
+        self.pri = pri
+
+class PriorityQueue(Heap):
+    @classmethod
+    def cmp(x, y):
+        return Heap.cmp(x.pri, y.pri)
+    
+    def __init__(self):
+        super().__init__(cmp=PriorityQueue.cmp)
+        
+    def put(self, value, pri=0):
+        super().put(Node(value, pri))
+        
+    def pop(self):
+        node = super().pop()
+        if node is None:
+            return None
+        return node.value

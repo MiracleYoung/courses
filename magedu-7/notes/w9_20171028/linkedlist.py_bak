@@ -1,0 +1,110 @@
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+        self.prev = None
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+        
+    def append(self, value):
+        node = Node(value)
+        
+        if self.head is None:
+            self.head = node
+            self.tail = node
+        else:
+            self.tail.next = node
+            node.prev = self.tail
+            self.tail = node
+    
+    def pop(self):
+        if self.head is None:
+            return
+        
+        node = self.tail
+        self.tail = node.prev
+        value = node.value
+        self.tail.next = None
+        return value
+        
+#         current = self.head
+#         tmp = None
+        
+#         while current.next is not None:
+#             tmp = current
+#             current = current.next
+            
+#         if tmp is not None:
+#             tmp.next = None
+#             self.tail = tmp
+#             return current.value
+            
+#         if tmp is None:
+#             value = current.value
+#             self.head = None
+#             self.tail = None
+#             return current.value
+    
+    def insert(self, index, value):
+        node = Node(value)
+        
+        if index == 0:
+            node.next = self.head
+            
+            if self.head is not None:
+                self.head.prev = node
+            
+            self.head = node
+            
+            if node.next is None:
+                self.tail = node
+            
+            return 
+
+        current = self.head
+        for _ in range(2, index + 1):
+            if current is None:
+                raise Exception('')
+                
+            current = current.next
+            
+        node.next = current.next
+        node.prev = current
+        
+        current.next = node
+        
+        if node.next is None:
+            self.tail = node
+    
+    def remove(self, index):
+        if index == 0:
+            if self.head is None:
+                raise Exception('')
+            self.head = self.head.next
+            self.prev = None
+            return
+
+        current = self.head
+    
+        for _ in range(2, index + 1):
+            if current is None:
+                raise Exception('')
+            current = current.next
+            
+        if current.next is None:
+            raise Exception('')
+            
+            
+        node = current.next.next
+        current.next = node
+        node.prev = current
+        if node is not None:
+            node.prev = current
+            
+#         current.next = current.next.next
+        
+        if current.next is None:
+            self.tail = current
