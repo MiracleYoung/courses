@@ -1,5 +1,3 @@
-
-
 import time
 
 from django.shortcuts import render, redirect
@@ -7,8 +5,8 @@ from django.http import HttpResponse
 from django.db import models
 from django.utils import timezone
 
-
 from user.models import User
+from . import forms
 
 
 # /user/index
@@ -22,6 +20,7 @@ def index(request):
     
     '''
     return HttpResponse(html)
+
 
 def index_v2(request):
     # user 下面创建了一个templates 目录，
@@ -44,7 +43,7 @@ def login(request):
     password = request.GET.get('password', '')
     user = User.login(name, password)
     if user:
-        request.session['user'] = {'name': user.name}
+        request.session['user'] = {'name': user.name, 'id': user.id}
         return redirect('user:users')
     else:
         context = {}
@@ -76,10 +75,12 @@ def logout(request):
     request.session.flush()
     return redirect('user:user')
 
+
 def create(request):
     if request.session.get('user') is None:
         return redirect('user:user')
     return render(request, 'user/create.html')
+
 
 def save(request):
     print(request.POST)
@@ -109,6 +110,7 @@ def save(request):
         context['age'] = request.POST.get('age', '')
         context['telephone'] = request.POST.get('telephone', '')
         return render(request, 'user/create.html', context)
+
 
 def valid_save(params):
     is_valid = True
@@ -205,7 +207,6 @@ def valid_modify(params):
         errors['name'].append(('name已经存在'))
         is_valid = False
 
-
     age = params.get('age', '').strip()
     errors['age'] = []
     if not age.isdigit():
@@ -222,8 +223,19 @@ def change_password(request):
     if request.session.get('user') is None:
         return redirect('user:user')
 
-    return HttpResponse('password')
+    print(request.POST)
+    form = None
+    if request.method == 'GET':
+        form = forms.ChangePasswordForm()
+    else:
+        form = forms.ChangePasswordForm(request.session.get('user'), request.POST)
+        if form.is_valid():
+            user = User.objects.get(id=request.session.get('user').get('id'))
+            user.set_password(form.cleaned_data.get('password'))
+            user.save()
+            return redirect('user:logout')
 
+    return render(request, 'user/change_password.html', {'form': form})
 
 
 '''

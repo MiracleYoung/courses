@@ -22,4 +22,6 @@ urlpatterns = [
     # localhost:8000/user/login,
     # localhost:8000/user/logout,
     path('user/', include(('user.urls', 'user'), namespace='user')),
+    path('agent/', include(('agent.urls', 'agent'), namespace='agent')),
+    path('api/', include(('api.urls', 'api'), namespace='api')),
 ]

@@ -1,0 +1,9 @@
+{
+//  200: success, 400: hostname 不能为空, 500:服务器错误
+  "code": "",
+  "text": "",
+  "result": {
+    "created": "",
+    "client": ""
+  }
+}
