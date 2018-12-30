@@ -50,6 +50,7 @@ class Client(Attr2DictMixin, models.Model):
         '''
         _instance = None
         _created = False
+        # 判断是否重复注册
         try:
             _instance = cls.objects.get(uuid=uuid)
         except models.ObjectDoesNotExist:
