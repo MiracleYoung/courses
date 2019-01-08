@@ -9,7 +9,6 @@
 .DS_Store
 .cache
 *.pyc
-*.html
 *.xlm
 
 # Byte-compiled / optimized / DLL files
