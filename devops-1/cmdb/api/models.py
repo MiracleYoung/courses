@@ -76,6 +76,12 @@ class Client(Attr2DictMixin, models.Model):
             return False
 
 
+    def as_dict(self):
+        _dict = super().as_dict()
+        _dict['is_online'] = self.is_online
+        return _dict
+
+
     def __str__(self):
         return f'<Client: {self.uuid}>'
 

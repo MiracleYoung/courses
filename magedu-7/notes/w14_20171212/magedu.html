@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>magedu</title>
+<style type="text/css">
+	a:link {color: red}		/* 未访问的链接 */
+	a:visited {color: black}	/* 已访问的链接 */
+	a:hover {color: blue}	/* 鼠标移动到链接上 */
+	a:active {color: green}
+
+</style>
+</head>
+<body>
+
+<h1>This is heading 1</h1>
+<h2>This is heading 2</h2>
+<h3>This is heading 3</h3>
+<h4>This is heading 4</h4>
+<h5>This is heading 5</h5>
+<h6>This is heading 6</h6>
+
+<a href="http://www.baidu.com" target="_blank">http://wwww.baidu.com</a>
+<a href="http://facebook.com">http://www.facebook.com</a>
+<a href="http://cn.bing.com">http://cn.bing.com</a>
+<article>
+	这是一个大块
+	<section>
+		内容
+		<div style="text-align: center;">
+			这个是被居中的内容
+		</div>
+		<strong>加粗</strong><br><br>
+		<i style="display: block;">斜体</i>
+		<del>删除</del>
+		<span>标记</span>
+		<p>文章</p>
+	</section>
+	<aside>
+		
+	</aside>
+
+	<img src="./11.jpg" alt="h标签">
+</article>
+<select>
+	<optgroup label="group A">
+		<option>A</option>
+		<option selected="selected">B</option>
+		<option>C</option>
+	</optgroup>
+	<optgroup label="group B">
+		<option>D</option>
+		<option selected="selected">E</option>
+		<option>F</option>
+	</optgroup>
+</select>
+
+<code>def func():
+		pass</code>
+
+<p>def func():
+		pass<p>
+
+<!-- 一个form 表单，只能有一个submit 按钮，
+submit 按钮是用来提交表单的数据的
+如果需要有一些交互式的按钮操作，可以使用button按钮 -->
+<form action="#" method="post">
+	<input type="text" name="name" required="required" value="miracle" placeholder="填写姓名">
+	<input type="email" name="email" value="" placeholder="填写邮箱">
+	<input type="password" name="pwd" value="" placeholder="填写密码">
+	<input type="number" name="age" id="age">
+	<input type="button" onmouseover="javascript: alert(1)" />
+	<input type="submit" />
+</form>
+
+<!-- <iframe src="http://www.baidu.com" width="100%" height="800px"></iframe> -->
+
+
+<form action="form_action.asp" method="get">
+  <label for="name">First name:</label>
+  <input type="text" name="name" />
+  Last name: <input type="text" name="lname" />
+  <input type="submit" value="Submit" />
+</form>
+
+<ul>
+	<li>li A</li>
+	<li>li B</li>
+	<li>li C</li>
+</ul>
+
+<ol>
+	<li>li A</li>
+	<li>li B</li>
+	<li>li C</li>
+</ol>
+
+<form>
+  <label for="male">Male</label>
+  <input type="radio" name="sex" id="male" />
+  <br />
+  <label for="female">Female</label>
+  <input type="radio" name="sex" id="female" />
+</form>
+
+<div style="width: 500px; height: 500px; background: green;">
+	Top Div
+	<div style="width: 200px; height: 200px; background: red;">
+		Second Div
+		<div style="width: 100px; height: 100px; background: orange;">
+			Third Div
+		</div>
+	</div>
+
+	<div style="width: 200px; height: 200px; background: blue;">
+		Second Second Div
+	</div>
+
+</div>
+
+
+
+
+
+
+</body>
+</html>

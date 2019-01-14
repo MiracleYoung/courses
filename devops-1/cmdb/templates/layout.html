@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+
+
+    <link href="/static/bootstrap-3.3.7/css/bootstrap.css" rel="stylesheet">
+{#    <link href="/static/bootstrap-3.3.7/css/bootstrap-theme.css" rel="stylesheet">#}
+    {% block style %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">CMDB</a>
+        </div>
+
+        <div id="navbar">
+            <ul class="nav navbar-nav">
+                <li {% block nav_user %}{% endblock %}><a href="{% url 'user:users' %}">用户管理</a></li>
+                <li {% block nav_host %}{% endblock %}><a href="{% url 'agent:agent_list' %}">主机管理</a></li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{% url 'user:change_password' %}">{{ request.session.user.name }}</a></li>
+                <li><a href="{% url 'user:logout' %}">登出</a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+
+<div>
+    {% block container %} {% endblock %}
+
+    {% block dialog %}{% endblock %}
+</div>
+
+<script src="/static/jquery.min.js"></script>
+<script src="/static/bootstrap-3.3.7/js/bootstrap.js"></script>
+{% block script %}{% endblock %}
+{% block js %}{% endblock %}
+</body>
+</html>

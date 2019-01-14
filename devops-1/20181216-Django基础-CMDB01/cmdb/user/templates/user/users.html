@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="/static/bootstrap-3.3.7/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+
+<nav class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">CMDB</a>
+        </div>
+
+        <div id="navbar">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">用户管理</a></li>
+                <li><a href="#about">主机管理</a></li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{% url 'user:change_password' %}">{{ request.session.user.name }}</a></li>
+                <li><a href="{% url 'user:logout' %}">登出</a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+
+
+{#用户名，用户内容，手机号，年龄，email，注册时间，登陆时间#}
+
+<div class="container">
+    <table>
+    <thead>
+    <tr>
+        <th>用户名</th>
+        <th>年龄</th>
+        <th>手机号</th>
+        <th>邮箱</th>
+        <th>注册时间</th>
+        <th>登陆时间</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for user in data %}
+        <tr>
+            <td>{{ user.name }}</td>
+            <td>{{ user.age }}</td>
+            <td>{{ user.telephone }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.register_time }}</td>
+            <td>{{ user.login_time }}</td>
+            <td>
+                <a href="/user/edit/?id={{ user.id }}">编辑</a>
+                <a href="/user/delete/?id={{ user.id }}">删除</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="/static/bootstrap-3.3.7/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/signin.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">CMDB</a>
+        </div>
+
+        <div id="navbar">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">用户管理</a></li>
+                <li><a href="#about">主机管理</a></li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">{{ user.name }}</a></li>
+                <li><a href="/user/logout/">登出</a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+
+<div class="container">
+
+    <form class="form-signin" action="{% url 'user:save' %}" method="post">
+        {% csrf_token %}
+        {% if errors.name %}
+            <div class="form-group">
+                <label for="name" class="col-sm-4 control-label">Email address</label>
+                <div class="col-sm-8">
+                    <p class="form-control-static" style="color:red"> {{ errors.name.0 }}</p>
+                </div>
+            </div>
+        {% endif %}
+        {% if errors.password %}
+            <div class="form-group">
+                <label for="name" class="col-sm-4 control-label">Password</label>
+                <div class="col-sm-8">
+                    <p class="form-control-static" style="color:red"> {{ errors.password.0 }}</p>
+                </div>
+            </div>
+        {% endif %}
+        {% if errors.age %}
+            <div class="form-group">
+                <label for="name" class="col-sm-4 control-label">Age</label>
+                <div class="col-sm-8">
+                    <p class="form-control-static" style="color:red"> {{ errors.age.0 }}</p>
+                </div>
+            </div>
+        {% endif %}
+
+        <h2 class="form-signin-heading">用户注册页面</h2>
+        <div class="form-group">
+            <label for="name" class="sr-only">User Name</label>
+            <input type="text" id="name" class="form-control" name="name" placeholder="User Name" value="{{ name }}">
+        </div>
+        <div class="form-group">
+            <label for="email" class="sr-only">Email address</label>
+            <input type="email" id="email" class="form-control" name="email" placeholder="Email address" value="{{ email }}">
+        </div>
+        <div class="form-group">
+            <label for="password" class="sr-only">Password</label>
+            <input type="password" id="password" class="form-control" name="password" placeholder="Password" value="{{ password }}">
+        </div>
+        <div class="form-group">
+            <label for="password2" class="sr-only">Password</label>
+            <input type="password" id="password2" class="form-control" name="password2" placeholder="Password2" value="{{ password2 }}">
+        </div>
+        <div class="form-group">
+            <label for="age" class="sr-only">Password</label>
+            <input type="text" id="age" class="form-control" name="age" placeholder="age" value="{{ age }}">
+        </div>
+
+        <div class="form-group">
+            <label for="telephone" class="sr-only">Password</label>
+            <input type="text" id="telephone" class="form-control" name="telephone" placeholder="telephone" value="{{ telephone }}">
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+    </form>
+
+</div> <!-- /container -->
+
+
+</body>
+</html>

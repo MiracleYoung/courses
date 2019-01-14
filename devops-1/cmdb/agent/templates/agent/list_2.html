@@ -1,0 +1,409 @@
+{% extends 'layout.html' %}
+
+{% block title %}用户管理{% endblock %}
+
+{% block nav_host %}class='active'{% endblock %}
+
+{% block style %}
+    <link href="/static/DataTables-1.10.15/media/css/dataTables.bootstrap.min.css" rel="stylesheet">
+{% endblock %}
+
+
+
+{% block container %}
+    <div class="container">
+        <table class="table-agent">
+            <thead>
+            <tr>
+                <th>IP(name)</th>
+                <th>MAC</th>
+                <th>平台/架构</th>
+                <th>CPU/MEM</th>
+                <th>地址</th>
+                <th>应用</th>
+                <th>使用者</th>
+                <th>备注</th>
+                <th>注册时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for object in object_list %}
+                <tr>
+                    <input type="hidden" name="inputid" id="inputid" value="{{ object.id }}">
+                    <td>
+                        {{ object.ip }} ({{ object.hostname }})
+                        {% if not object.is_online %}
+                            <span class=""></span>
+                        {% endif %}
+                    </td>
+                    <td>{{ object.mac }}</td>
+                    <td>{{ object.platform }} / {{ object.arch }}</td>
+                    <td>{{ object.cpu }} / {{ object.mem|filesizeformat }}</td>
+                    <td>{{ object.addr }}</td>
+                    <td>{{ object.application }}</td>
+                    <td>{{ object.user }}</td>
+                    <td>{{ object.remark }}</td>
+                    <td>{{ object.register_time|date:'Y-m-d H:i:s' }}</td>
+                    <td>
+                        <a href="javascript:void(0)" data-addr="{{ object.addr }}"
+                           data-application="{{ object.application }}" data-remark="{{ object.remark }}"
+                           data-user="{{ object.user }}" data-id="{{ object.id }}" class="edit">编辑</a>
+                        <a href="javascript:void(0)" class="delete" data-id="{{ object.id }}"
+                           data-ip="{{ object.ip }}" data-hostname="{{ object.hostname }}">删除</a>
+                        <a href="javascript:void(0)" data-uuid="{{ object.uuid }}" class="detail">查看</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="10">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                                <li>
+                                    <a href="{% url 'agent:agent_list' %}?page={{ page_obj.previous_page_number }}"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="disabled">
+                                    <a href="javascript:void(0)" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+
+
+                            {% if page_obj.has_previous %}
+                                <li>
+                                    <a href="{% url 'agent:agent_list' %}?page={{ page_obj.previous_page_number }}">
+                                        {{ page_obj.previous_page_number }}
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            <li>
+                                <a href="javascript:void(0)">
+                                    {{ page_obj.number }}
+                                </a>
+                            </li>
+
+                            {% if page_obj.has_next %}
+                                <li>
+                                    <a href="{% url 'agent:agent_list' %}?page={{ page_obj.next_page_number }}">
+                                        {{ page_obj.next_page_number }}
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% if page_obj.has_next %}
+                                <li>
+
+                                    <a href="{% url 'agent:agent_list' %}?page={{ page_obj.next_page_number }}"
+                                       aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="disabled">
+
+                                    <a href="javascript:void(0)" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                        <span>共{{ paginator.count }} 条数据，共 {{ paginator.num_pages }}页</span>
+                    </nav>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+
+{% endblock %}
+
+
+{% block dialog %}
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="dialog-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">修改主机信息</h4>
+                </div>
+                <div class="modal-body">
+
+
+                    <form class="form-horizontal" id="form-edit">
+                        <input type="hidden" id="id" name="id" value="">
+                        <div class="form-group">
+                            <label for="addr" class="col-sm-2 control-label">地址</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="addr" name="add" placeholder="addr">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="application" class="col-sm-2 control-label">应用</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="application" name="application"
+                                       placeholder="application">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="user" class="col-sm-2 control-label">使用者</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="user" name="user" placeholder="user">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="remark" class="col-sm-2 control-label">备注</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="remark" name="remark" placeholder="remark">
+                            </div>
+                        </div>
+
+
+                    </form>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary btn-save">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="dialog-detail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="modal-detail">主机详情</h4>
+                </div>
+                <div class="modal-body" id="chart" style="width: 600px;height:400px;">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-close-detail" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary btn-save">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block script %}
+    <script src="/static/echarts.min.js"></script>
+    <script src="/static/sweetalert.min.js"></script>
+    <script src="/static/DataTables-1.10.15/media/js/jquery.dataTables.min.js"></script>
+    <script src="/static/DataTables-1.10.15/media/js/dataTables.bootstrap.min.js"></script>
+    <script>
+        jQuery(document).ready(function () {
+
+            {#let table = jQuery('table.table-agent').DataTable({#}
+            {#    language: {#}
+            {#        url: "/static/locale/DataTables.i18n.zh_cn.json"#}
+            {#    }#}
+            {#})
+        #}
+
+
+        jQuery('a.edit').on('click', function () {
+
+            jQuery('input#addr').val(jQuery(this).data('addr'))
+            jQuery('input#user').val(jQuery(this).data('user'))
+            jQuery('input#application').val(jQuery(this).data('application'))
+            jQuery('input#remark').val(jQuery(this).data('remark'))
+            jQuery('input#id').val(jQuery(this).data('id'))
+
+            jQuery('#dialog-edit').modal('show')
+            return false;
+        })
+
+        jQuery('button.btn-save').on('click', function () {
+            let url = ''
+            let data = jQuery('form#form-edit').serializeArray()
+            jQuery.post("{% url 'agent:agent_modify' %}", data, function (response) {
+                if (response['code'] == '200') {
+                    // alert('更新成功')
+                    swal({
+                        title: '更新成功',
+                        type: 'success',
+                        showCancelButton: true,
+                        confirmButtonColor: '#DD6B55',
+                        confirmButtonText: '确定',
+                        {#cancelButtonText: '取消更新',#}
+                        closeOnConfirm: false,
+                    }).then(
+                        function (isConfirm) {
+                            window.location.reload()
+                        })
+
+
+                } else if (response['code'] == '400') {
+                    let errors = []
+                    for (var error in response['errors']) {
+                        errors.push(response['errors'][error][0]['message'])
+                    }
+                    {#alert(errors.join('\n'))#}
+                    swal({
+                        title: '更新失败',
+                        text: errors.join('\n'),
+                        type: 'error',
+                        confirmButtonText: '确定',
+                        closeOnConfirm: true
+                    })
+                }
+            }, 'json')
+        })
+
+
+        jQuery('a.delete').on('click', function () {
+            let id = jQuery(this).data('id')
+            let ip = jQuery(this).data('ip')
+            let hostname = jQuery(this).data('hostname')
+
+
+            swal({
+                title: '确定删除主机' + ip + "(" + hostname + ")吗？",
+                type: 'warning',
+                showCancelButton: true,
+                // confirmButtonColor: '#DD6B55',
+                confirmButtonText: '确认删除',
+                cancelButtonText: '取消删除',
+                closeOnConfirm: false,
+            }).then(
+                function (isConfirm) {
+                    if (isConfirm) {
+                        // TODO
+                        console.log('删除')
+                        windows.location.replace('delete url')
+                        swal('删除成功', '', 'success')
+                    } else {
+                        console.log('取消')
+                    }
+                })
+        })
+
+        var th = null
+
+
+        jQuery('a.detail').on('click', function () {
+            let uuid = jQuery(this).data('uuid')
+
+
+            reload(uuid)
+
+            jQuery('#dialog-detail').modal('show')
+
+            th = setInterval(function () {
+                reload(uuid)
+            }, 10 * 1000)
+
+
+            return false
+        })
+
+        jQuery('.btn-close-detail').on('click', function () {
+            if (th != null) {
+                clearInterval(th)
+                th = null
+            }
+            jQuery('#dialog-detail').modal('hide')
+        })
+
+
+        function reload(uuid) {
+            var myChart = echarts.init(document.getElementById('chart'));
+
+            jQuery.get("{% url 'agent:agent_resource' %}?uuid=" + uuid, function (response) {
+
+                console.log(response['result'])
+                if (response['code'] != 200) {
+                    return
+                }
+
+                let data_xAxis = []
+                let data_cpu = []
+                let data_mem = []
+
+                jQuery.each(response['result'], function (idx, value) {
+                    data_xAxis.unshift(value['time'])
+                    data_cpu.unshift(value['cpu'])
+                    data_mem.unshift(value['mem'])
+                })
+
+                // 指定图表的配置项和数据
+                option = {
+                    title: {
+                        text: '折线图堆叠'
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data: ['CPU使用率', '内存使用率']
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: data_xAxis
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    series: [
+                        {
+                            name: 'cpu使用率',
+                            type: 'line',
+                            stack: 'cpu使用率',
+                            data: data_cpu
+                        },
+                        {
+                            name: '内存使用率',
+                            type: 'line',
+                            stack: '内存使用率',
+                            data: data_mem
+                        }
+
+                    ]
+                };
+                myChart.setOption(option);
+            })
+
+
+        }
+
+
+        })
+    </script>
+
+{% endblock %}

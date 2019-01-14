@@ -4,11 +4,15 @@
 
 {% block nav_host %}class='active'{% endblock %}
 
+{% block style %}
+    <link href="/static/DataTables-1.10.15/media/css/dataTables.bootstrap.min.css" rel="stylesheet">
+{% endblock %}
+
 
 
 {% block container %}
     <div class="container">
-        <table>
+        <table class="table-agent">
             <thead>
             <tr>
                 <th>IP(name)</th>
@@ -24,32 +28,33 @@
             </tr>
             </thead>
             <tbody>
-            {% for object in object_list %}
-                <tr>
-                    <input type="hidden" name="inputid" id="inputid" value="{{ object.id }}">
-                    <td>
-                        {{ object.ip }} ({{ object.hostname }})
-                        {% if not object.is_online %}
-                            <span class=""></span>
-                        {% endif %}
-                    </td>
-                    <td>{{ object.mac }}</td>
-                    <td>{{ object.platform }} / {{ object.arch }}</td>
-                    <td>{{ object.cpu }} / {{ object.mem|filesizeformat }}</td>
-                    <td>{{ object.addr }}</td>
-                    <td>{{ object.application }}</td>
-                    <td>{{ object.user }}</td>
-                    <td>{{ object.remark }}</td>
-                    <td>{{ object.register_time|date:'Y-m-d H:i:s' }}</td>
-                    <td>
-                        <a href="javascript:void(0)" data-addr="{{ object.addr }}"
-                           data-application="{{ object.application }}" data-remark="{{ object.remark }}"
-                           data-user="{{ object.user }}" data-id="{{ object.id }}" class="edit">编辑</a>
-                        <a href="javascript:void(0)">删除</a>
-                        <a href="javascript:void(0)" data-uuid="{{ object.uuid }}" class="detail">查看</a>
-                    </td>
-                </tr>
-            {% endfor %}
+            {#            {% for object in object_list %}#}
+            {#                <tr>#}
+            {#                    <input type="hidden" name="inputid" id="inputid" value="{{ object.id }}">#}
+            {#                    <td>#}
+            {#                        {{ object.ip }} ({{ object.hostname }})#}
+            {#                        {% if not object.is_online %}#}
+            {#                            <span class=""></span>#}
+            {#                        {% endif %}#}
+            {#                    </td>#}
+            {#                    <td>{{ object.mac }}</td>#}
+            {#                    <td>{{ object.platform }} / {{ object.arch }}</td>#}
+            {#                    <td>{{ object.cpu }} / {{ object.mem|filesizeformat }}</td>#}
+            {#                    <td>{{ object.addr }}</td>#}
+            {#                    <td>{{ object.application }}</td>#}
+            {#                    <td>{{ object.user }}</td>#}
+            {#                    <td>{{ object.remark }}</td>#}
+            {#                    <td>{{ object.register_time|date:'Y-m-d H:i:s' }}</td>#}
+            {#                    <td>#}
+{#                                    <a href="javascript:void(0)" data-addr="{{ object.addr }}"#}
+{#                                       data-application="{{ object.application }}" data-remark="{{ object.remark }}"#}
+{#                                       data-user="{{ object.user }}" data-id="{{ object.id }}" class="edit">编辑</a>#}
+{#                                    <a href="javascript:void(0)" class="delete" data-id="{{ object.id }}"#}
+{#                                       data-ip="{{ object.ip }}" data-hostname="{{ object.hostname }}">删除</a>#}
+{#                                    <a href="javascript:void(0)" data-uuid="{{ object.uuid }}" class="detail">查看</a>#}
+            {#                    </td>#}
+            {#                </tr>#}
+            {#            {% endfor %}#}
             </tbody>
         </table>
     </div>
@@ -139,9 +144,68 @@
 
 
 {% block script %}
-    <script src="/static/echarts.common.min.js"></script>
+    <script src="/static/echarts.min.js"></script>
+    <script src="/static/sweetalert.min.js"></script>
+    <script src="/static/DataTables-1.10.15/media/js/jquery.dataTables.min.js"></script>
+    <script src="/static/DataTables-1.10.15/media/js/dataTables.bootstrap.min.js"></script>
     <script>
         jQuery(document).ready(function () {
+
+            let table = jQuery('table.table-agent').DataTable({
+                language: {
+                    url: "/static/locale/DataTables.i18n.zh_cn.json"
+                },
+                ajax: {
+                    url: "{% url 'agent:agent_list_ajax' %}",
+                    dataSrc: 'data'
+                },
+                columns: [
+                    // columns 中的数据是 每一行 数据
+                    // 第一个就是ip
+
+                    {
+                        "data": function(line){
+                            return line['ip'] + '(' + line['hostname'] + ')'
+                        }
+                    },
+                    // 第二个就是 mac 地址
+                    {"data": "mac"},
+                    {
+                        "data": function(line){
+                            return line['platform'] + '/' + line['arch']
+                        }
+                    },
+                    // cpu/mem
+                    {
+                        "data": function(line){
+                            return line['cpu'] + '(核)/' + new Number(line['mem'] / 1024 / 1024 / 1024).toFixed(2) + '(G)'
+                        }
+                    },
+                    {"data": "addr"},
+                    {"data": "application"},
+                    {"data": "user"},
+                    {"data": "remark"},
+                    {"data": "register_time"},
+                    {
+                        "data": function(line){
+                            let tpl = '<a href="javascript:void(0)" data-addr="%addr%"\n' +
+                                'data-application="%application%" data-remark="%remark%"\n' +
+                                'data-user="%user%" data-id="%id%" class="edit">编辑</a>\n' +
+                                '<a href="javascript:void(0)" class="delete" data-id="%id%"\n' +
+                                'data-ip="%ip%" data-hostname="%hostname%">删除</a>\n' +
+                                '<a href="javascript:void(0)" data-uuid="%uuid%" class="detail">查看</a>'
+                            return tpl.replace('%uuid%', line['uuid']).replace('%addr%', line['addr'])
+                                .replace('%application%', line['application']).replace('%remark%', line['remark'])
+                                .replace('%user%', line['user']).replace(/%id%/g, line['id'])
+                                .replace('%ip%', line['ip']).replace('%hostname%', line['hostname'])
+                                .replace('%uuid%', line['uuid'])
+                        }
+                    }
+
+                ]
+            })
+
+
             jQuery('a.edit').on('click', function () {
 
                 jQuery('input#addr').val(jQuery(this).data('addr'))
@@ -159,16 +223,64 @@
                 let data = jQuery('form#form-edit').serializeArray()
                 jQuery.post("{% url 'agent:agent_modify' %}", data, function (response) {
                     if (response['code'] == '200') {
-                        alert('更新成功')
-                        window.location.reload()
+                        // alert('更新成功')
+                        swal({
+                            title: '更新成功',
+                            type: 'success',
+                            showCancelButton: true,
+                            confirmButtonColor: '#DD6B55',
+                            confirmButtonText: '确定',
+                            {#cancelButtonText: '取消更新',#}
+                            closeOnConfirm: false,
+                        }).then(
+                            function (isConfirm) {
+                                window.location.reload()
+                            })
+
+
                     } else if (response['code'] == '400') {
                         let errors = []
                         for (var error in response['errors']) {
                             errors.push(response['errors'][error][0]['message'])
                         }
-                        alert(errors.join('\n'))
+                        {#alert(errors.join('\n'))#}
+                        swal({
+                            title: '更新失败',
+                            text: errors.join('\n'),
+                            type: 'error',
+                            confirmButtonText: '确定',
+                            closeOnConfirm: true
+                        })
                     }
                 }, 'json')
+            })
+
+
+            jQuery('a.delete').on('click', function () {
+                let id = jQuery(this).data('id')
+                let ip = jQuery(this).data('ip')
+                let hostname = jQuery(this).data('hostname')
+
+
+                swal({
+                    title: '确定删除主机' + ip + "(" + hostname + ")吗？",
+                    type: 'warning',
+                    showCancelButton: true,
+                    // confirmButtonColor: '#DD6B55',
+                    confirmButtonText: '确认删除',
+                    cancelButtonText: '取消删除',
+                    closeOnConfirm: false,
+                }).then(
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            // TODO
+                            console.log('删除')
+                            windows.location.replace('delete url')
+                            swal('删除成功', '', 'success')
+                        } else {
+                            console.log('取消')
+                        }
+                    })
             })
 
             var th = null
@@ -187,21 +299,16 @@
                 }, 10 * 1000)
 
 
-
                 return false
             })
 
             jQuery('.btn-close-detail').on('click', function () {
-                if (th != null){
+                if (th != null) {
                     clearInterval(th)
                     th = null
                 }
                 jQuery('#dialog-detail').modal('hide')
             })
-
-
-
-
 
 
             function reload(uuid) {
@@ -210,7 +317,7 @@
                 jQuery.get("{% url 'agent:agent_resource' %}?uuid=" + uuid, function (response) {
 
                     console.log(response['result'])
-                    if (response['code'] != 200){
+                    if (response['code'] != 200) {
                         return
                     }
 
@@ -275,6 +382,8 @@
 
 
             }
+
+
         })
     </script>
 
